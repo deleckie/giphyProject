@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Geek-O-Vision</title>
+</head>
+
+<body>
+  <h1>Geek-O-Vision</h1></br>
+  <h3>serch for GIFs of your favoraite obscure and geeky SciFi</h3></br>
+  <div id="buttons-view">
+    <button data-scifi="Red Dwarf">Red Dwarf</button>
+    <button data-scifi="Fringe">Fringe</button>
+    <button data-scifi="Twilight Zone">Twilight Zone</button>
+    <button data-scifi="The Prisoner">The Prisoner</button>
+  </div>
+
+
+  <form id="scifi-form">
+    <label for="scifi-input">Add some SciFi</label>
+    <input type="text" id="scifi-input">
+    <!-- Button triggers new scifi to be added -->
+    <input id="add-scifi" type="submit" value="Search">
+  </form>
+
+  <div id="gifs-appear-here">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var scifi = ["Red Dwarf", "Fringe", "Twilight Zone", "The Prisoner"];
+
+    // Event listener for all button elements
+    $("button").on("click", function() {
+
+      // In this case, the "this" keyword refers to the button that was clicked
+      var scifi = $(this).attr("data-scifi");
+
+      // Constructing a URL to search Giphy for the name of the scifi TV show
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        scifi + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      // Performing our AJAX GET request
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        // After the data comes back from the API
+        .done(function(response) {
+
+          // Storing an array of results in the results variable
+          var results = response.data;
+
+          // Looping over every result item
+          for (var i = 0; i < results.length; i++) {
+
+            // Only taking action if the photo has an appropriate rating
+            if (results[i].rating !== "" && results[i].rating !== "") {
+
+              // Creating a div with the class "item"
+              var gifDiv = $("<div class='item'>");
+
+              // Storing the result item's rating
+              var rating = results[i].rating;
+
+              // Creating a paragraph tag with the result item's rating
+              var p = $("<p>").text("Rating: " + rating);
+
+              // Creating an image tag
+              var scifiImage = $("<img>");
+
+              // Giving the image tag an src attribute of a proprty pulled off the
+              // result item
+              scifiImage.attr("src", results[i].images.fixed_height.url);
+
+              // Appending the paragraph and scifiImage we created to the "gifDiv" div we created
+              gifDiv.append(p);
+              gifDiv.append(scifiImage);
+
+              // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
+              $("#gifs-appear-here").prepend(gifDiv);
+            }
+          }
+        });
+    });
+    // Function for displaying scifi data
+    function renderButtons() {
+
+      // Deleting the scifi prior to adding new scifi
+      // (this is necessary otherwise you will have repeat buttons)
+      $("#buttons-view").empty();
+
+      // Looping through the array of scifi
+      for (var i = 0; i < scifi.length; i++) {
+
+        // Then dynamicaly generating buttons for each scifi in the array
+        // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+        var a = $("<button>");
+        // Adding a class of scifi to our button
+        a.addClass("scifi");
+        // Adding a data-attribute
+        a.attr("data-name", scifi[i]);
+        // Providing the initial button text
+        a.text(scifi[i]);
+        // Adding the button to the buttons-view div
+        $("#buttons-view").append(a);
+      }
+    }
+
+    // This function handles events where a scifi button is clicked
+    $("#add-scifi").on("click", function(event) {
+      event.preventDefault();
+      // This line grabs the input from the textbox
+      var scifi = $("#scifi-input").val().trim();
+
+      // Adding scifi from the textbox to our array
+      scifi.push(scifi);
+
+      // Calling renderButtons which handles the processing of our scifi array
+      renderButtons();
+    });
+
+    // Adding a click event listener to all elements with a class of "scifi"
+    $(document).on("click", ".scifi", displayScifiInfo);
+
+    // Calling the renderButtons function to display the intial buttons
+    renderButtons();
+  </script>
+</body>
+
+</html>

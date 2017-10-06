@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Geek-O-Vision</title>
+</head>
+
+<body>
+  <h1>Geek-O-Vision</h1></br>
+  <h3>serch for GIFs of your favoraite obscure and geeky SciFi</h3></br>
+  <div id="buttons-view">
+    <button data-scifi="Red Dwarf">Red Dwarf</button>
+    <button data-scifi="Fringe">Fringe</button>
+    <button data-scifi="Twilight Zone">Twilight Zone</button>
+    <button data-scifi="The Prisoner">The Prisoner</button>
+  </div>
+
+
+  <form id="scifi-form">
+    <label for="scifi-input">Add some SciFi</label>
+    <input type="text" id="scifi-input">
+    <!-- Button triggers new scifi to be added -->
+    <input id="add-scifi" type="submit" value="Search">
+  </form>
+
+  <div id="gifs-appear-here">
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script type="text/javascript">
+    var scifi = ["Red Dwarf", "Fringe", "Twilight Zone", "The Prisoner"];
+
+    // Event listener for all button elements
+    $("button").on("click", function() {
+
+      // In this case, the "this" keyword refers to the button that was clicked
+      var scifi = $(this).data("name");
+
+      // Constructing a URL to search Giphy for the name of the scifi TV show
+      var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        scifi + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+      // Performing our AJAX GET request
+      $.ajax({
+          url: queryURL,
+          method: "GET"
+        })
+        // After the data comes back from the API
+        .done(function(response) {
+
+          // Storing an array of results in the results variable
+          var results = response.data;
+
+          // Looping over every result item
+          for (var i = 0; i < results.length; i++) {
+
+            // Only taking action if the photo has an appropriate rating
+            if (results[i].rating !== "" && results[i].rating !== "") {
+
+              // im trying to use this variable and set of atributes to stop and animate my gifs.
+              var gifDiv = $("<div class='item'>");
+              gifDiv.attr("scr", results[i].image.fixed_height.url);
+
+                gifDiv.attr("scr", results[i].image.fixed_height.url);
+                gifDiv.attr("data-still", results[i].image.fixed_height.url);
+                gifDiv.attr("data-animate", results[i].image.fixed_height.url);
+
+              // Storing the result item's rating
+              var rating = results[i].rating;
+
+              // Creating a paragraph tag with the result item's rating
+              var p = $("<p>").text("Rating: " + rating);
+
+              // Creating an image tag
+              var scifiImage = $("<img>");
+
+              // Giving the image tag an src attribute of a proprty pulled off the
+              // result item
+              scifiImage.attr("src", results[i].images.fixed_height.url);
+
+              .attr("data-state", "still");
+
+              // Appending the paragraph and scifiImage we created to the "gifDiv" div we created
+              gifDiv.append(p);
+              gifDiv.append(scifiImage);
+
+              // Prepending the gifDiv to the "#gifs-appear-here" div in the HTML
+              $("#gifs-appear-here").prepend(gifDiv);
+            }
+          }
+          // $(".item").on("click", function(){
+          //   var state = $(this).attr("data-state");
+          //   if (state === "still") {
+          //     $(this).attr("src", $(this).attr("data-animate"));
+          //     $(this).attr("data-state", "animate");
+          //   } else {
+          //     $(this).attr("src", $(this).attr("data-still"));
+          //     $(this).attr("data-state", "still");
+          //   }
+          })
+        });
+    });
+  </script>
+</body>
+
+</html>
