@@ -1,106 +1,105 @@
-//gophykey
-//https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC
 
-// Initial array of Nerdy Sci Fi TV shows
-var movies = ["Red Dwarf", "Fringe", "Battlestar Galactica", "American Gods"];
+alert("test");
 
-// displayMovieInfo function re-renders the HTML to display the appropriate content
-function displayMovieInfo() {
+// Initial array of movies
+    var movies = ["The Matrix", "The Notebook", "Mr. Nobody", "The Lion King"];
 
-  var movie = $(this).attr("data-name");
-  var queryURL = "https://api.giphy.com/v1/gifs/trending?api_key=dc6zaTOxFJmzC";
+    // displayMovieInfo function re-renders the HTML to display the appropriate content
+    function displayMovieInfo() {
 
-  // Creating an AJAX call for the specific movie button being clicked
-  $.ajax({
-    url: queryURL,
-    method: "GET"
-  }).done(function(response) {
+      var movie = $(this).attr("data-name");
+      var queryURL = "https://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=40e9cece";
 
-    // Creating a div to hold the movie
-    var movieDiv = $("<div class='movie'>");
-      console.log(queryURL);
+      // Creating an AJAX call for the specific movie button being clicked
+      $.ajax({
+        url: queryURL,
+        method: "GET"
+      }).done(function(response) {
 
-    // Storing the rating data
-    var rating = response.Rated;
+        // Creating a div to hold the movie
+        var movieDiv = $("<div class='movie'>");
 
-    // Creating an element to have the rating displayed
-    var pOne = $("<p>").text("Rating: " + rating);
+        // Storing the rating data
+        var rating = response.Rated;
 
-    // Displaying the rating
-    movieDiv.append(pOne);
+        // Creating an element to have the rating displayed
+        var pOne = $("<p>").text("Rating: " + rating);
 
-    // Storing the release year
-    var released = response.Released;
+        // Displaying the rating
+        movieDiv.append(pOne);
 
-    // Creating an element to hold the release year
-    var pTwo = $("<p>").text("Released: " + released);
+        // Storing the release year
+        var released = response.Released;
 
-    // Displaying the release year
-    movieDiv.append(pTwo);
+        // Creating an element to hold the release year
+        var pTwo = $("<p>").text("Released: " + released);
 
-    // Storing the plot
-    var plot = response.Plot;
+        // Displaying the release year
+        movieDiv.append(pTwo);
 
-    // Creating an element to hold the plot
-    var pThree = $("<p>").text("Plot: " + plot);
+        // Storing the plot
+        var plot = response.Plot;
 
-    // Appending the plot
-    movieDiv.append(pThree);
+        // Creating an element to hold the plot
+        var pThree = $("<p>").text("Plot: " + plot);
 
-    // Retrieving the URL for the image
-    var imgURL = response.Poster;
+        // Appending the plot
+        movieDiv.append(pThree);
 
-    // Creating an element to hold the image
-    var image = $("<img>").attr("src", imgURL);
+        // Retrieving the URL for the image
+        var imgURL = response.Poster;
 
-    // Appending the image
-    movieDiv.append(image);
+        // Creating an element to hold the image
+        var image = $("<img>").attr("src", imgURL);
 
-    // Putting the entire movie above the previous movies
-    $("#movies-view").prepend(movieDiv);
-  });
+        // Appending the image
+        movieDiv.append(image);
 
-}
+        // Putting the entire movie above the previous movies
+        $("#movies-view").prepend(movieDiv);
+      });
 
-// Function for displaying movie data
-function renderButtons() {
+    }
 
-  // Deleting the movies prior to adding new movies
-  // (this is necessary otherwise you will have repeat buttons)
-  $("#buttons-view").empty();
+    // Function for displaying movie data
+    function renderButtons() {
 
-  // Looping through the array of movies
-  for (var i = 0; i < movies.length; i++) {
+      // Deleting the movies prior to adding new movies
+      // (this is necessary otherwise you will have repeat buttons)
+      $("#buttons-view").empty();
 
-    // Then dynamicaly generating buttons for each movie in the array
-    // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
-    var a = $("<button>");
-    // Adding a class of movie to our button
-    a.addClass("movie");
-    // Adding a data-attribute
-    a.attr("data-name", movies[i]);
-    // Providing the initial button text
-    a.text(movies[i]);
-    // Adding the button to the buttons-view div
-    $("#buttons-view").append(a);
-  }
-}
+      // Looping through the array of movies
+      for (var i = 0; i < movies.length; i++) {
 
-// This function handles events where a movie button is clicked
-$("#add-movie").on("click", function(event) {
-  event.preventDefault();
-  // This line grabs the input from the textbox
-  var movie = $("#movie-input").val().trim();
+        // Then dynamicaly generating buttons for each movie in the array
+        // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+        var a = $("<button>");
+        // Adding a class of movie to our button
+        a.addClass("movie");
+        // Adding a data-attribute
+        a.attr("data-name", movies[i]);
+        // Providing the initial button text
+        a.text(movies[i]);
+        // Adding the button to the buttons-view div
+        $("#buttons-view").append(a);
+      }
+    }
 
-  // Adding movie from the textbox to our array
-  movies.push(movie);
+    // This function handles events where a movie button is clicked
+    $("#add-movie").on("click", function(event) {
+      event.preventDefault();
+      // This line grabs the input from the textbox
+      var movie = $("#movie-input").val().trim();
 
-  // Calling renderButtons which handles the processing of our movie array
-  renderButtons();
-});
+      // Adding movie from the textbox to our array
+      movies.push(movie);
 
-// Adding a click event listener to all elements with a class of "movie"
-$(document).on("click", ".movie", displayMovieInfo);
+      // Calling renderButtons which handles the processing of our movie array
+      renderButtons();
+    });
 
-// Calling the renderButtons function to display the intial buttons
-renderButtons();
+    // Adding a click event listener to all elements with a class of "movie"
+    $(document).on("click", ".movie", displayMovieInfo);
+
+    // Calling the renderButtons function to display the intial buttons
+    renderButtons();
